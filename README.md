@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Pintos project 1
 
 我英语水平一般，将就着看看吧
