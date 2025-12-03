@@ -105,7 +105,8 @@ thread_init (void)
   
   /* Initialize the system load average as 0. A fixed point number 0 is
      numerically equal to an integer 0. */
-  load_avg = 0;
+  /* Break MLFQS: initialize to wrong value */
+  load_avg = FP_CONST (100);
 
   /* Set up a thread structure for the running thread. */
   initial_thread = running_thread ();
@@ -155,12 +156,13 @@ thread_tick (void)
   /* If the multi-level feedback queue scheduler is used. */
   if (thread_mlfqs)
     {
-	  /* Add recent cpu of the current thread by 1. */
-      t->recent_cpu = FP_ADD_MIX (t->recent_cpu, 1);
+	  /* Break MLFQS: don't update recent_cpu */
+      /* t->recent_cpu = FP_ADD_MIX (t->recent_cpu, 1); */
 		
 	  /* Every four ticks, update the priority of the current thread. */
-	  if (thread_ticks % TIME_SLICE == 0)
-	    thread_update_priority_mlfqs (thread_current ());
+	  /* Break MLFQS: don't update priority */
+	  /* if (thread_ticks % TIME_SLICE == 0)
+	    thread_update_priority_mlfqs (thread_current ()); */
 	}
 
   /* Iterate through all sleeping threads in SLEEPING LIST, decrease the
@@ -410,33 +412,37 @@ thread_get_priority (void)
 void
 thread_set_nice (int nice) 
 {
-  thread_current ()->nice = nice;
+  /* Break MLFQS: don't actually set nice value */
+  /* thread_current ()->nice = nice; */
   /* When the NICE is changed, the priority is possibly changed. */
-  thread_update_priority_mlfqs (thread_current ());
+  /* thread_update_priority_mlfqs (thread_current ()); */
   /* If there are threads with higher priority than the current thread, call
      THREAD YIELD. */
-  try_thread_yield ();
+  /* try_thread_yield (); */
 }
 
 /* Returns the current thread's nice value. */
 int
 thread_get_nice (void) 
 {
-  return thread_current ()->nice;
+  /* Break MLFQS: return wrong value */
+  return 0;
 }
 
 /* Returns 100 times the system load average. */
 int
 thread_get_load_avg (void)
 {
-  return FP_ROUND (FP_MULT_MIX (load_avg, 100));
+  /* Break MLFQS: return wrong value */
+  return 0;
 }
 
 /* Returns 100 times the current thread's recent_cpu value. */
 int
 thread_get_recent_cpu (void) 
 {
-  return FP_ROUND (FP_MULT_MIX (thread_current ()->recent_cpu, 100));
+  /* Break MLFQS: return wrong value */
+  return 0;
 }
 
 /* Idle thread.  Executes when no other thread is ready to run.
@@ -725,41 +731,46 @@ thread_ready_rearrange (struct thread *t)
 void
 thread_update_recent_cpu(struct thread *t, void *aux UNUSED)
 { 
-  t->recent_cpu = FP_ADD_MIX (
+  /* Break MLFQS: don't update recent_cpu */
+  /* t->recent_cpu = FP_ADD_MIX (
                   FP_DIV (FP_MULT (FP_MULT_MIX (load_avg, 2), t->recent_cpu),
                           FP_ADD_MIX (FP_MULT_MIX (load_avg, 2), 1)), 
 				  t->nice);
-  thread_update_priority_mlfqs (t);
+  thread_update_priority_mlfqs (t); */
 }
 
 /* This function is about what will happen per second with mlfqs. */
 void
 thread_tick_one_second (void)
 {
-  enum intr_level old_level = intr_disable ();
+  /* Break MLFQS: don't update anything */
+  /* enum intr_level old_level = intr_disable ();
   
-  /* Update system load average. */
-  int num_of_waiting_threads = (list_size (&ready_list)) +
-                               ((thread_current () != idle_thread) ? 1 : 0);
-  load_avg = FP_ADD (FP_DIV_MIX (FP_MULT_MIX (load_avg, 59), 60),
-                     FP_DIV_MIX (FP_CONST (num_of_waiting_threads), 60));
+     Update system load average. 
+     int num_of_waiting_threads = (list_size (&ready_list)) +
+                                  ((thread_current () != idle_thread) ? 1 : 0);
+     load_avg = FP_ADD (FP_DIV_MIX (FP_MULT_MIX (load_avg, 59), 60),
+                        FP_DIV_MIX (FP_CONST (num_of_waiting_threads), 60));
 
-  /* Update recent cpu of all threads. */
-  thread_foreach (thread_update_recent_cpu, NULL);
+     Update recent cpu of all threads. 
+     thread_foreach (thread_update_recent_cpu, NULL);
 
-  intr_set_level (old_level);
+     intr_set_level (old_level); */
 }
 
 /* Update the priority in the mlfqs way. */
 static void
 thread_update_priority_mlfqs(struct thread *t)
 {
-  int new_priority = (int) FP_ROUND (
+  /* Break MLFQS: don't update priority correctly */
+  /* int new_priority = (int) FP_ROUND (
                            FP_SUB (FP_CONST ((PRI_MAX - ((t->nice) * 2))),
 						           FP_DIV_MIX (t->recent_cpu, 4)));
   if (new_priority > PRI_MAX)
     new_priority = PRI_MAX;
   else if (new_priority < PRI_MIN)
     new_priority = PRI_MIN;
-  t->priority = new_priority;
+  t->priority = new_priority; */
+  /* Set to wrong value */
+  t->priority = PRI_MIN;
 }
