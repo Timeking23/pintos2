@@ -100,8 +100,6 @@ thread_init (void)
   list_init (&ready_list);
   list_init (&all_list);
   list_init (&sleeping_list);
-  
-  // load_avg = FP_CONST (100);
 
   /* Set up a thread structure for the running thread. */
   initial_thread = running_thread ();
@@ -152,7 +150,6 @@ thread_tick (void)
   if (thread_mlfqs)
     {
 	  /* Break MLFQS: don't update recent_cpu */
-      /* t->recent_cpu = FP_ADD_MIX (t->recent_cpu, 1); */
 		
 	  /* Every four ticks, update the priority of the current thread. */
 	  /* Break MLFQS: don't update priority */
