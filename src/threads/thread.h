@@ -115,10 +115,6 @@ struct thread
 	struct lock *current_lock;          /* The thread been locked by this
 	                                       lock. */
 	
-	/* Owned by thread.c and synch.c. */
-	int nice;                           /* Determines how nice a thread should
-	                                       be to other threads. */
-	fixed_t recent_cpu;                 /* The recent cpu. */
   };
 
 /* If false (default), use round-robin scheduler.

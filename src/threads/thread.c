@@ -58,8 +58,6 @@ static long long user_ticks;    /* # of timer ticks in user programs. */
 #define TIME_SLICE 4            /* # of timer ticks to give each thread. */
 static unsigned thread_ticks;   /* # of timer ticks since last yield. */
 
-/* The system load average. */
-static fixed_t load_avg;
 
 /* If false (default), use round-robin scheduler.
    If true, use multi-level feedback queue scheduler.
@@ -103,10 +101,7 @@ thread_init (void)
   list_init (&all_list);
   list_init (&sleeping_list);
   
-  /* Initialize the system load average as 0. A fixed point number 0 is
-     numerically equal to an integer 0. */
-  /* Break MLFQS: initialize to wrong value */
-  load_avg = FP_CONST (100);
+  // load_avg = FP_CONST (100);
 
   /* Set up a thread structure for the running thread. */
   initial_thread = running_thread ();
@@ -409,39 +404,20 @@ thread_get_priority (void)
 }
 
 /* Sets the current thread's nice value to NICE. */
-void
-thread_set_nice (int nice) 
-{
-  /* Break MLFQS: don't actually set nice value */
-  /* thread_current ()->nice = nice; */
-  /* When the NICE is changed, the priority is possibly changed. */
-  /* thread_update_priority_mlfqs (thread_current ()); */
-  /* If there are threads with higher priority than the current thread, call
-     THREAD YIELD. */
-  /* try_thread_yield (); */
-}
+void thread_set_nice (int nice){}
 
-/* Returns the current thread's nice value. */
-int
-thread_get_nice (void) 
+int thread_get_nice (void) 
 {
-  /* Break MLFQS: return wrong value */
   return 0;
 }
 
-/* Returns 100 times the system load average. */
-int
-thread_get_load_avg (void)
+int thread_get_load_avg (void)
 {
-  /* Break MLFQS: return wrong value */
   return 0;
 }
 
-/* Returns 100 times the current thread's recent_cpu value. */
-int
-thread_get_recent_cpu (void) 
+int thread_get_recent_cpu (void) 
 {
-  /* Break MLFQS: return wrong value */
   return 0;
 }
 
@@ -713,8 +689,7 @@ thread_update_priority (struct thread *t)
   intr_set_level (old_level);
 }
 
-/* If the priority of a ready thread changes, this function should be called
-   to re-arrange the order of the READY LIST. */
+/* If the priority of a ready thread changes, rearrange it*/
 void
 thread_ready_rearrange (struct thread *t)
 {
@@ -727,50 +702,12 @@ thread_ready_rearrange (struct thread *t)
   intr_set_level (old_level);
 }
 
-/* Used in THREAD FOREACH, to update RECENT CPU of all threads per second. */
-void
-thread_update_recent_cpu(struct thread *t, void *aux UNUSED)
-{ 
-  /* Break MLFQS: don't update recent_cpu */
-  /* t->recent_cpu = FP_ADD_MIX (
-                  FP_DIV (FP_MULT (FP_MULT_MIX (load_avg, 2), t->recent_cpu),
-                          FP_ADD_MIX (FP_MULT_MIX (load_avg, 2), 1)), 
-				  t->nice);
-  thread_update_priority_mlfqs (t); */
-}
-
-/* This function is about what will happen per second with mlfqs. */
-void
-thread_tick_one_second (void)
-{
-  /* Break MLFQS: don't update anything */
-  /* enum intr_level old_level = intr_disable ();
-  
-     Update system load average. 
-     int num_of_waiting_threads = (list_size (&ready_list)) +
-                                  ((thread_current () != idle_thread) ? 1 : 0);
-     load_avg = FP_ADD (FP_DIV_MIX (FP_MULT_MIX (load_avg, 59), 60),
-                        FP_DIV_MIX (FP_CONST (num_of_waiting_threads), 60));
-
-     Update recent cpu of all threads. 
-     thread_foreach (thread_update_recent_cpu, NULL);
-
-     intr_set_level (old_level); */
-}
+void thread_update_recent_cpu(struct thread *t, void *aux UNUSED){}
+void thread_tick_one_second (void){}
 
 /* Update the priority in the mlfqs way. */
 static void
 thread_update_priority_mlfqs(struct thread *t)
 {
-  /* Break MLFQS: don't update priority correctly */
-  /* int new_priority = (int) FP_ROUND (
-                           FP_SUB (FP_CONST ((PRI_MAX - ((t->nice) * 2))),
-						           FP_DIV_MIX (t->recent_cpu, 4)));
-  if (new_priority > PRI_MAX)
-    new_priority = PRI_MAX;
-  else if (new_priority < PRI_MIN)
-    new_priority = PRI_MIN;
-  t->priority = new_priority; */
-  /* Set to wrong value */
   t->priority = PRI_MIN;
 }
