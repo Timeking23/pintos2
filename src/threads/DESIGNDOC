@@ -278,81 +278,14 @@ Without synchronization, we could have:
 >> another design you considered?
 
 This design was chosen because:
-1. **Nested donation support**: The current_lock chain allows following donation chains through multiple levels
-2. **Efficient priority calculation**: Using max_priority per lock avoids recalculating from waiters each time
-3. **Correct restoration**: When a lock is released, priority is recalculated from remaining locks, ensuring correct behavior
-4. **Minimal overhead**: Priority updates only happen when necessary (lock acquire/release, priority change)
+1. Nested donation support: The current_lock chain allows following donation chains through multiple levels
+2. Efficient priority calculation: Using max_priority per lock avoids recalculating from waiters each time
+3. Correct restoration: When a lock is released, priority is recalculated from remaining locks, ensuring correct behavior
+4. Minimal overhead: Priority updates only happen when necessary (lock acquire/release, priority change)
 
 Alternative considered: Storing donation relationships in a separate data structure. This would be more complex and require more memory. The current design reuses existing structures (locks_held, current_lock) efficiently.
 
 Another alternative: Not supporting nested donation. This would be simpler but wouldn't handle priority inversion in complex scenarios (e.g., H waits for M, M waits for L).
-
-
-
-			  ADVANCED SCHEDULER
-			  ==================
-
----- DATA STRUCTURES ----
-
->> C1: Copy here the declaration of each new or changed `struct' or
->> `struct' member, global or static variable, `typedef', or
->> enumeration.  Identify the purpose of each in 25 words or less.
-
-**Not implemented.** The advanced scheduler (MLFQS) is not implemented in this submission. All MLFQS-related code has been disabled or left as stubs. The fixed_point.h file has been removed, and MLFQS functionality is intentionally broken to focus on the alarm clock and priority scheduler implementations.
-
-
-
----- ALGORITHMS ----
-
->> C2: Suppose threads A, B, and C have nice values 0, 1, and 2.  Each
->> has a recent_cpu value of 0.  Fill in the table below showing the
->> scheduling decision and the priority and recent_cpu values for each
->> thread after each given number of timer ticks:
-
-**Not applicable** - Advanced scheduler is not implemented.
-
-
-
->> C3: Did any ambiguities in the scheduler specification make values
->> in the table uncertain?  If so, what rule did you use to resolve
->> them?  Does this match the behavior of your scheduler?
-
-**Not applicable** - Advanced scheduler is not implemented.
-
-
-
->> C4: How is the way you divided the cost of scheduling between code
->> inside and outside interrupt context likely to affect performance?
-
-**Not applicable** - Advanced scheduler is not implemented.
-
-
-
----- RATIONALE ----
-
->> C5: Briefly critique your design, pointing out advantages and
->> disadvantages in your design choices.  If you were to have extra
->> time to work on this part of the project, how might you choose to
->> refine or improve your design?
-
-**Not applicable** - Advanced scheduler is not implemented. If implementing it, would need to:
-1. Implement fixed-point arithmetic for load_avg, recent_cpu calculations
-2. Update recent_cpu every tick for running thread
-3. Recalculate priorities every 4 ticks
-4. Update load_avg every second
-5. Use proper synchronization for shared variables
-
-
-
->> C6: The assignment explains arithmetic for fixed-point math in
->> detail, but it leaves it open to you to implement it.  Why did you
->> decide to implement it the way you did?  If you created an
->> abstraction layer for fixed-point math, that is, an abstract data
->> type and/or a set of functions or macros to manipulate fixed-point
->> numbers, why did you do so?  If not, why not?
-
-**Not applicable** - Advanced scheduler and fixed-point math are not implemented. The fixed_point.h file was removed as it was not needed for the alarm clock and priority scheduler implementations.
-
 
 
 			   SURVEY QUESTIONS
@@ -369,22 +302,20 @@ the quarter.
 >> In your opinion, was this assignment, or any one of the three problems
 >> in it, too easy or too hard?  Did it take too long or too little time?
 
-The alarm clock and priority scheduler were appropriately challenging. The nested priority donation required careful thought about data structures and algorithms. The advanced scheduler was not implemented, so cannot comment on its difficulty.
-
+The alarm clock and priority scheduler were not to bad but the priority took a while to grasp and slowed my progress + other classes
 
 
 >> Did you find that working on a particular part of the assignment gave
 >> you greater insight into some aspect of OS design?
 
-Implementing priority donation, especially nested donation, provided excellent insight into how operating systems handle priority inversion problems. Understanding the interaction between locks, threads, and the scheduler was very educational.
-
+Implementing priority was fun till you have to optimize then you start learning from the struggle and apreciate it 
 
 
 >> Is there some particular fact or hint we should give students in
 >> future quarters to help them solve the problems?  Conversely, did you
 >> find any of our guidance to be misleading?
 
-The documentation was generally clear. One helpful hint would be to emphasize the importance of understanding the relationship between current_lock and locks_held for nested donation. Also, clarifying that interrupt disabling is appropriate for short critical sections in kernel code.
+The documentation was generally clear. i had difficulty with the sema lock.
 
 
 
@@ -392,13 +323,9 @@ The documentation was generally clear. One helpful hint would be to emphasize th
 >> students, either for future quarters or the remaining projects?
 
 Suggestions:
-1. Provide more examples of nested donation scenarios
-2. Emphasize testing edge cases (zero/negative sleep times, priority donation chains)
-3. Help students understand when to use interrupt disabling vs. locks
-
+have more ta available for it since my classes end after 5pm i dont get much help
 
 
 >> Any other comments?
 
-The project was well-designed and provided good hands-on experience with kernel-level programming concepts.
-
+NA
